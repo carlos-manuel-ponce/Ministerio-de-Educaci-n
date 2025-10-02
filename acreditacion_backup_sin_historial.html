@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acreditación - Registro de Asistencias</title>
+    <link rel="icon" href="data:,">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --brand: #1e3a8a;
+            --success: #16a34a;
+            --error: #dc2626;
+            --text: #1f2937;
+            --light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Inter, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--brand);
+            margin: 0;
+        }
+
+        .logout-btn {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .search-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+            text-align: center;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 0.5rem;
+        }
+
+        .search-subtitle {
+            color: var(--light);
+            margin-bottom: 1.5rem;
+            font-size: 14px;
+        }
+
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--brand);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--brand);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: var(--text);
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card.total {
+            border-left: 4px solid var(--brand);
+        }
+
+        .stat-card.present {
+            border-left: 4px solid var(--success);
+        }
+
+        .stat-card.absent {
+            border-left: 4px solid var(--error);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card.total .stat-number {
+            color: var(--brand);
+        }
+
+        .stat-card.present .stat-number {
+            color: var(--success);
+        }
+
+        .stat-card.absent .stat-number {
+            color: var(--error);
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: var(--light);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results-section {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .results-section.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--brand);
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--light);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .confirm-btn:hover {
+            background: #15803d;
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: var(--error);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+            border-left: 4px solid var(--error);
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+            border-left: 4px solid var(--success);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <img src="LOGO NUEVO COLOR_122003.png" alt="Logo" class="logo">
+            <h1 class="header-title">Acreditación</h1>
+        </div>
+        <button class="logout-btn" onclick="logout()">Salir</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Search Card -->
+        <div class="search-card">
+            <h2 class="search-title">Búsqueda de Asistente</h2>
+            <p class="search-subtitle">Ingrese el DNI para verificar identidad y dar asistencia.</p>
+            
+            <form class="search-form" onsubmit="searchUser(event)">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Ingrese DNI"
+                    required
+                >
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="searchBtn">
+                        Buscar y Acreditar
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="updateStats()">
+                        Actualizar
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection">
+                <div class="user-info" id="userInfo">
+                    <!-- User info will be populated here -->
+                </div>
+                <button class="confirm-btn" onclick="showConfirmModal()">
+                    Dar Asistencia
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-number" id="totalCount">209</div>
+                <div class="stat-label">Total Registrados</div>
+            </div>
+            <div class="stat-card present">
+                <div class="stat-number" id="presentCount">0</div>
+                <div class="stat-label">Presentes</div>
+            </div>
+            <div class="stat-card absent">
+                <div class="stat-number" id="absentCount">209</div>
+                <div class="stat-label">Ausentes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Confirmar Asistencia</h3>
+            <p id="confirmText">¿Confirma que desea registrar la asistencia de este participante?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmAttendance()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://pjcokjzxzgefpdmbkuop.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqY29ranp4emdlZnBkbWJrdW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwOTU4MDEsImV4cCI6MjA0MzY3MTgwMX0.m6p56KgGnlqSsJJJYCCqPbYMB6x_FjFyO5R5mRANY5c'
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        
+        let currentUser = null;
+
+        // Función para probar conectividad con Supabase
+        async function testSupabaseConnection() {
+            try {
+                console.log('🔄 Probando conexión con Supabase...');
+                
+                const { data, error } = await _supabase
+                    .from('asistencia')
+                    .select('count', { count: 'exact' })
+                    .limit(1);
+                
+                if (error) {
+                    console.error('❌ Error de conexión:', error);
+                    showError('Error de conexión: ' + error.message);
+                    return false;
+                }
+                
+                console.log('✅ Conexión exitosa con Supabase');
+                return true;
+            } catch (error) {
+                console.error('❌ Error crítico:', error);
+                showError('Error crítico de conexión');
+                return false;
+            }
+        }
+
+        // Función para buscar usuario
+        async function searchUser(event) {
+            event.preventDefault();
+            
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            const dni = searchInput.value.trim();
+            
+            if (!dni) {
+                showError('Por favor ingrese un DNI');
+                return;
+            }
+
+            // Mostrar loading
+            searchBtn.textContent = 'Buscando...';
+            searchBtn.disabled = true;
+            searchBtn.classList.add('loading');
+
+            try {
+                console.log('🔍 Buscando DNI:', dni);
+                
+                const { data: users, error } = await _supabase
+                    .from('asistencia')
+                    .select('*')
+                    .eq('dni', dni)
+                    .limit(1);
+
+                if (error) {
+                    throw error;
+                }
+
+                if (users && users.length > 0) {
+                    currentUser = users[0];
+                    showUserResults(currentUser);
+                    resultsSection.classList.add('show');
+                } else {
+                    showError('No se encontró ningún registro con el DNI: ' + dni);
+                    resultsSection.classList.remove('show');
+                }
+
+            } catch (error) {
+                console.error('❌ Error en búsqueda:', error);
+                showError('Error al buscar: ' + error.message);
+                resultsSection.classList.remove('show');
+            } finally {
+                // Restaurar botón
+                searchBtn.textContent = 'Buscar y Acreditar';
+                searchBtn.disabled = false;
+                searchBtn.classList.remove('loading');
+            }
+        }
+
+        // Función para mostrar resultados del usuario
+        function showUserResults(user) {
+            const userInfo = document.getElementById('userInfo');
+            
+            userInfo.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Región</div>
+                    <div class="info-value">${user.region || 'No especificada'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Establecimiento</div>
+                    <div class="info-value">${user.establecimiento || 'No especificado'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Cargo</div>
+                    <div class="info-value">${user.cargo || 'No especificado'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Aspirante</div>
+                    <div class="info-value">${user.aspirante || 'No especificado'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">DNI</div>
+                    <div class="info-value">${user.dni}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Asiento</div>
+                    <div class="info-value">${user.asiento || 'No asignado'}</div>
+                </div>
+            `;
+        }
+
+        // Función para mostrar modal de confirmación
+        function showConfirmModal() {
+            if (!currentUser) return;
+            
+            const modal = document.getElementById('confirmModal');
+            const confirmText = document.getElementById('confirmText');
+            
+            confirmText.textContent = `¿Confirma que desea registrar la asistencia de ${currentUser.aspirante}?`;
+            modal.classList.add('show');
+        }
+
+        // Función para cerrar modal
+        function closeModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('show');
+        }
+
+        // Función para confirmar asistencia
+        async function confirmAttendance() {
+            if (!currentUser) return;
+
+            const modal = document.getElementById('confirmModal');
+            
+            try {
+                console.log('✅ Registrando asistencia para:', currentUser.dni);
+                
+                const now = new Date().toISOString();
+                
+                const { error } = await _supabase
+                    .from('asistencia')
+                    .update({ 
+                        presente: true, 
+                        fecha_registro: now 
+                    })
+                    .eq('dni', currentUser.dni);
+
+                if (error) {
+                    throw error;
+                }
+
+                showSuccess('¡Asistencia registrada exitosamente!');
+                modal.classList.remove('show');
+                
+                // Limpiar formulario y actualizar estadísticas
+                document.getElementById('searchInput').value = '';
+                document.getElementById('resultsSection').classList.remove('show');
+                updateStats();
+                
+            } catch (error) {
+                console.error('❌ Error al registrar asistencia:', error);
+                showError('Error al registrar asistencia: ' + error.message);
+            }
+        }
+
+        // Función para actualizar estadísticas
+        async function updateStats() {
+            try {
+                console.log('📊 Actualizando estadísticas...');
+                
+                // Total registrados
+                const { count: totalCount, error: totalError } = await _supabase
+                    .from('asistencia')
+                    .select('*', { count: 'exact', head: true });
+
+                if (totalError) throw totalError;
+
+                // Presentes
+                const { count: presentCount, error: presentError } = await _supabase
+                    .from('asistencia')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('presente', true);
+
+                if (presentError) throw presentError;
+
+                // Actualizar DOM
+                document.getElementById('totalCount').textContent = totalCount || 0;
+                document.getElementById('presentCount').textContent = presentCount || 0;
+                document.getElementById('absentCount').textContent = (totalCount || 0) - (presentCount || 0);
+
+                console.log('📊 Estadísticas actualizadas:', { totalCount, presentCount });
+
+            } catch (error) {
+                console.error('❌ Error al actualizar estadísticas:', error);
+            }
+        }
+
+        // Funciones de utilidad
+        function showError(message) {
+            // Remover mensajes anteriores
+            const existingMessages = document.querySelectorAll('.error-message, .success-message');
+            existingMessages.forEach(msg => msg.remove());
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            document.querySelector('.search-card').appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            // Remover mensajes anteriores
+            const existingMessages = document.querySelectorAll('.error-message, .success-message');
+            existingMessages.forEach(msg => msg.remove());
+
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            document.querySelector('.search-card').appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        function logout() {
+            if (confirm('¿Está seguro que desea cerrar sesión?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando aplicación...');
+            
+            // Probar conexión y cargar estadísticas
+            testSupabaseConnection().then(connected => {
+                if (connected) {
+                    updateStats();
+                }
+            });
+            
+            // Focus en el input
+            document.getElementById('searchInput').focus();
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
