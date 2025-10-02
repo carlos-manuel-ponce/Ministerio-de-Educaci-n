@@ -1,6 +1,27 @@
-# 📋 Sistema de Registro de Asistencias
+# 🎯 Registro de Asistencias - Ministerio de Educación
 
-Sistema web moderno para registro y control de asistencias con plano interactivo de asientos y actualizaciones en tiempo real.
+Sistema web para registro de asistencia de aspirantes con interfaz optimizada para dispositivos móviles (390px).
+
+## 🚀 **DEPLOYMENT EN GITHUB PAGES - PASOS FINALES**
+
+### ⚡ Activar GitHub Pages AHORA:
+1. Ve a: https://github.com/carlos-manuel-ponce/Ministerio-de-Educaci-n/settings/pages
+2. En **Source**, selecciona **GitHub Actions**
+3. ¡El deploy será automático!
+
+### 🔧 Configurar Supabase CORS:
+1. Ve a: https://supabase.com/dashboard/project/pjcokjzxzgefpdmbkuop/settings/api
+2. En **CORS Configuration**, agrega:
+   - `https://carlos-manuel-ponce.github.io`
+
+## 📊 Tabla Asistencia (IMPLEMENTADA)
+```sql
+CREATE TABLE asistencia (
+    region, establecimiento, cargo, aspirante,
+    dni UNIQUE, asiento UNIQUE (1-209),
+    presente BOOLEAN, fecha_asistencia
+);
+```
 
 ## ✨ Características
 
