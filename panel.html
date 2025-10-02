@@ -48,21 +48,22 @@ body {
 header {
   background:rgba(255,255,255,0.95);
   backdrop-filter:blur(10px);
-  padding:6px 16px;
+  padding:4px 16px;
   border-bottom:1px solid rgba(229,231,235,0.8);
   position:sticky;
   top:0;
   z-index:100;
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  height:100px;
 }
 
 .header-container {
-  display:grid;
-  grid-template-columns:auto 1fr auto;
+  display:flex;
+  justify-content:center;
   align-items:center;
-  gap:12px;
   max-width:1200px;
   margin:0 auto;
+  height:100%;
 }
 
 .header-left {
@@ -72,18 +73,18 @@ header {
 }
 
 .header-logo {
-  width:80px;
-  height:80px;
+  width:90px;
+  height:90px;
   object-fit:contain;
   border:none;
   outline:none;
   background:transparent;
-  filter:drop-shadow(0 2px 4px rgba(30, 58, 138, 0.2));
+  filter:drop-shadow(0 4px 8px rgba(30, 58, 138, 0.3));
   transition: all 0.3s ease;
 }
 
 .header-logo:hover {
-  filter:drop-shadow(0 6px 12px rgba(30, 58, 138, 0.3));
+  filter:drop-shadow(0 6px 12px rgba(30, 58, 138, 0.4));
   transform: scale(1.05);
 }
 
@@ -100,41 +101,7 @@ header {
   color:#000;
 }
 
-.header-title {
-  font-size:22px;
-  font-weight:700;
-  color:var(--brand);
-  margin:0;
-  text-align:center;
-  justify-self:center;
-}
 
-.header-actions {
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.auto-refresh {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--brand);
-  font-size:14px;
-}
-
-.refresh-indicator {
-  width:8px;
-  height:8px;
-  background:var(--ok);
-  border-radius:50%;
-  animation:pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity:1; }
-  50% { opacity:0.3; }
-}
 
 .user-info {
   display:flex;
@@ -622,14 +589,6 @@ dialog h3 {
 <header>
   <div class="header-container">
     <img src="LOGO NUEVO COLOR_122003.png" alt="Logo Institucional" class="header-logo">
-    <h1 class="header-title">Panel de Control</h1>
-    <div class="header-actions">
-      <div class="auto-refresh">
-        <div class="refresh-indicator"></div>
-        <span>Actualización automática</span>
-      </div>
-      <button class="logout-btn" onclick="logout()">Salir</button>
-    </div>
   </div>
 </header>
 
