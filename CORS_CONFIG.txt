@@ -1,18 +1,16 @@
-🔧 CONFIGURAR CORS EN SUPABASE
+🔧 CONFIGURAR CORS EN SUPABASE PARA VERCEL
 
-1. Ve a tu proyecto Supabase: https://supabase.com/dashboard/projects
-2. Selecciona tu proyecto: pjcokjzxzgefpdmbkuop
-3. Ve a Settings > API
-4. Busca "CORS origins" o "Allowed origins"
-5. Agrega estas URLs:
-   - http://localhost:3000
-   - http://localhost:8000
-   - http://localhost:8001
-   - http://localhost:8002
-   - http://localhost:8003
-   - http://localhost:8004
-   - http://localhost:8005
-   - http://localhost:8006
+⚠️ URGENTE: Para solucionar "Failed to fetch" en Vercel
+
+1. Ve a: https://supabase.com/dashboard/project/pjcokjzxzgefpdmbkuop/settings/api
+2. En "CORS Configuration", agrega TODOS estos dominios:
+
+📍 DOMINIOS REQUERIDOS:
+   ✅ https://tu-proyecto.vercel.app
+   ✅ https://*.vercel.app
+   ✅ https://carlos-manuel-ponce.github.io
+   ✅ http://localhost:3000
+   ✅ http://localhost:8000-8020
    - http://localhost:8007
    - http://localhost:8008
    - http://localhost:8009
