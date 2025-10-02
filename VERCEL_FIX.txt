@@ -10,9 +10,11 @@
    • Busca "CORS Configuration" 
    • Agrega estos dominios (uno por línea):
 
-   https://tu-proyecto-vercel.vercel.app
+   🎯 TU DOMINIO ESPECÍFICO:
+   https://ministerio-de-educaci-n.vercel.app
+   
+   🔧 DOMINIOS ADICIONALES RECOMENDADOS:
    https://*.vercel.app
-   https://vercel.app
    https://carlos-manuel-ponce.github.io
    http://localhost:3000
    http://localhost:8000
@@ -33,10 +35,11 @@
    • SUPABASE_URL está configurada
    • SUPABASE_ANON_KEY está configurada
 
-🔧 DOMINIOS COMUNES DE VERCEL:
-- https://proyecto.vercel.app
-- https://proyecto-git-main-usuario.vercel.app  
-- https://proyecto-usuario.vercel.app
+✅ TU PROYECTO IDENTIFICADO:
+🌐 URL Principal: https://ministerio-de-educaci-n.vercel.app/
+📋 Posibles URLs adicionales de Vercel:
+- https://ministerio-de-educaci-n-git-master-carlos-manuel-ponce.vercel.app
+- https://ministerio-de-educaci-n-carlos-manuel-ponce.vercel.app
 
 💡 TIPS:
 - Agrega TODOS los dominios posibles de tu proyecto
