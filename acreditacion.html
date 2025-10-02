@@ -3,115 +3,93 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Acreditación - Registro de Asistencias</title>
+    <title>Búsqueda de Asistentes - Ministerio de Educación</title>
     <link rel="icon" href="data:,">
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         :root {
+            --bg: #ffffff;
+            --panel: #f8fafc;
+            --txt: #1f2937;
+            --ok: #25d366;
             --brand: #1e3a8a;
-            --success: #16a34a;
             --error: #dc2626;
-            --text: #1f2937;
             --light: #6b7280;
-            --bg-light: #f8fafc;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: Inter, -apple-system, sans-serif;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
             background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            color: var(--txt);
             min-height: 100vh;
-            color: var(--text);
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--brand);
-            margin: 0;
-        }
-
-        .logout-btn {
-            background: var(--brand);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #1e40af;
-            transform: translateY(-1px);
+            overflow-x: hidden;
         }
 
         .main-container {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 2rem 1rem;
         }
 
-        .search-card {
-            background: rgba(255, 255, 255, 0.9);
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(15px);
-            border-radius: 12px;
+            border-radius: 1.25em;
+            box-shadow: 0 0.75em 2.5em rgba(30, 58, 138, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
-            text-align: center;
             max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            text-align: center;
+            margin: 0 auto 2rem auto;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .search-container:hover {
+            box-shadow: 0 16px 50px rgba(30, 58, 138, 0.20);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5em;
+        }
+
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0.25em 0.5em rgba(30, 58, 138, 0.15));
         }
 
         .search-title {
-            font-size: 20px;
+            font-size: 1.25em;
             font-weight: 700;
             color: var(--brand);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75em;
         }
 
-        .search-subtitle {
+        .intro-text {
+            font-size: 0.875em;
             color: var(--light);
-            margin-bottom: 1.5rem;
-            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 1.25em;
+            text-align: center;
         }
 
         .search-form {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1em;
         }
 
         .search-input {
@@ -159,7 +137,7 @@
 
         .btn-secondary {
             background: #f3f4f6;
-            color: var(--text);
+            color: var(--txt);
             border: 1px solid #d1d5db;
         }
 
@@ -167,62 +145,9 @@
             background: #e5e7eb;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-card.total {
-            border-left: 4px solid var(--brand);
-        }
-
-        .stat-card.present {
-            border-left: 4px solid var(--success);
-        }
-
-        .stat-card.absent {
-            border-left: 4px solid var(--error);
-        }
-
-        .stat-number {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card.total .stat-number {
-            color: var(--brand);
-        }
-
-        .stat-card.present .stat-number {
-            color: var(--success);
-        }
-
-        .stat-card.absent .stat-number {
-            color: var(--error);
-        }
-
-        .stat-label {
-            font-weight: 600;
-            color: var(--light);
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .results-section {
@@ -274,12 +199,12 @@
 
         .info-value {
             font-weight: 600;
-            color: var(--text);
+            color: var(--txt);
         }
 
         .confirm-btn {
             width: 100%;
-            background: var(--success);
+            background: var(--ok);
             color: white;
             border: none;
             padding: 1rem;
@@ -295,11 +220,6 @@
             transform: translateY(-1px);
         }
 
-        .loading {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
         .error-message {
             background: #fef2f2;
             color: var(--error);
@@ -308,18 +228,60 @@
             margin-top: 1rem;
             text-align: center;
             border-left: 4px solid var(--error);
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         .success-message {
             background: #f0fdf4;
-            color: var(--success);
+            color: var(--ok);
             padding: 1rem;
             border-radius: 8px;
             margin-top: 1rem;
             text-align: center;
-            border-left: 4px solid var(--success);
+            border-left: 4px solid var(--ok);
+            display: none;
         }
 
+        .success-message.show {
+            display: block;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.25em;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 2em;
+            height: 2em;
+            border: 0.25em solid #f3f4f6;
+            border-top: 0.25em solid var(--brand);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -359,50 +321,187 @@
             margin-top: 1.5rem;
         }
 
+        /* Historial de Acreditados */
+        .history-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-title {
+            color: var(--brand);
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .history-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ok);
+            line-height: 1;
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: var(--light);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s ease;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item:hover {
+            background: #f8fafc;
+        }
+
+        .history-person {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .person-name {
+            font-weight: 600;
+            color: var(--txt);
+            font-size: 0.9rem;
+        }
+
+        .person-details {
+            font-size: 0.75rem;
+            color: var(--light);
+            margin-top: 0.2rem;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--light);
+            text-align: right;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light);
+        }
+
+        .no-records-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-records-text {
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
-            .header {
+            .main-container {
                 padding: 1rem;
             }
 
-            .header-title {
-                font-size: 18px;
-            }
-
-            .logo {
-                width: 40px;
-                height: 40px;
+            .search-container {
+                padding: 1.5rem;
             }
 
             .button-group {
                 flex-direction: column;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .history-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
             }
 
-            .stat-number {
-                font-size: 28px;
+            .history-summary {
+                justify-content: center;
+            }
+
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .history-time {
+                margin-left: 0;
+                align-self: flex-end;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="header-left">
-            <img src="LOGO NUEVO COLOR_122003.png" alt="Logo" class="logo">
-            <h1 class="header-title">Acreditación</h1>
-        </div>
-        <button class="logout-btn" onclick="logout()">Salir</button>
-    </div>
-
-    <!-- Main Container -->
     <div class="main-container">
         <!-- Search Card -->
-        <div class="search-card">
+        <div class="search-container">
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+            </div>
+            
+            <!-- Solo Logo Centrado -->
+            <div class="header">
+                <img src="LOGO NUEVO COLOR_122003.png" alt="Logo Ministerio de Educación" class="header-logo">
+            </div>
+            
             <h2 class="search-title">Búsqueda de Asistente</h2>
-            <p class="search-subtitle">Ingrese el DNI para verificar identidad y dar asistencia.</p>
+            <p class="intro-text">Ingrese el DNI para verificar identidad y dar asistencia.</p>
             
             <form class="search-form" onsubmit="searchUser(event)">
                 <input 
@@ -416,11 +515,13 @@
                     <button type="submit" class="btn btn-primary" id="searchBtn">
                         Buscar y Acreditar
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="updateStats()">
+                    <button type="button" class="btn btn-secondary" onclick="loadAccreditedHistory()">
                         Actualizar
                     </button>
                 </div>
             </form>
+
+            <div class="error-message" id="errorMessage"></div>
 
             <!-- Results Section -->
             <div class="results-section" id="resultsSection">
@@ -431,21 +532,31 @@
                     Dar Asistencia
                 </button>
             </div>
+
+            <div class="success-message" id="successMessage">
+                ¡Asistencia registrada exitosamente!
+            </div>
         </div>
 
-        <!-- Statistics Grid -->
-        <div class="stats-grid">
-            <div class="stat-card total">
-                <div class="stat-number" id="totalCount">209</div>
-                <div class="stat-label">Total Registrados</div>
+        <!-- Historial de Acreditados -->
+        <div class="history-container">
+            <div class="history-header">
+                <h3 class="history-title">📋 Historial de Acreditados - Hoy</h3>
+                <div class="history-summary">
+                    <span class="summary-item">
+                        <span class="summary-number" id="totalAccredited">0</span>
+                        <span class="summary-label">Acreditados</span>
+                    </span>
+                    <button class="refresh-btn" onclick="loadAccreditedHistory()">
+                        🔄 Actualizar
+                    </button>
+                </div>
             </div>
-            <div class="stat-card present">
-                <div class="stat-number" id="presentCount">0</div>
-                <div class="stat-label">Presentes</div>
-            </div>
-            <div class="stat-card absent">
-                <div class="stat-number" id="absentCount">209</div>
-                <div class="stat-label">Ausentes</div>
+            <div class="history-list" id="historyList">
+                <div class="no-records">
+                    <div class="no-records-icon">📋</div>
+                    <div class="no-records-text">Cargando historial...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -468,7 +579,6 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqY29ranp4emdlZnBkbWJrdW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwOTU4MDEsImV4cCI6MjA0MzY3MTgwMX0.m6p56KgGnlqSsJJJYCCqPbYMB6x_FjFyO5R5mRANY5c'
         
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-        
         let currentUser = null;
 
         // Función para probar conectividad con Supabase
@@ -512,9 +622,7 @@
             }
 
             // Mostrar loading
-            searchBtn.textContent = 'Buscando...';
-            searchBtn.disabled = true;
-            searchBtn.classList.add('loading');
+            showLoading(true);
 
             try {
                 console.log('🔍 Buscando DNI:', dni);
@@ -543,10 +651,7 @@
                 showError('Error al buscar: ' + error.message);
                 resultsSection.classList.remove('show');
             } finally {
-                // Restaurar botón
-                searchBtn.textContent = 'Buscar y Acreditar';
-                searchBtn.disabled = false;
-                searchBtn.classList.remove('loading');
+                showLoading(false);
             }
         }
 
@@ -614,7 +719,7 @@
                     .from('asistencia')
                     .update({ 
                         presente: true, 
-                        fecha_registro: now 
+                        fecha_asistencia: now 
                     })
                     .eq('dni', currentUser.dni);
 
@@ -625,10 +730,12 @@
                 showSuccess('¡Asistencia registrada exitosamente!');
                 modal.classList.remove('show');
                 
-                // Limpiar formulario y actualizar estadísticas
+                // Actualizar historial inmediatamente
+                loadAccreditedHistory();
+                
+                // Limpiar formulario
                 document.getElementById('searchInput').value = '';
                 document.getElementById('resultsSection').classList.remove('show');
-                updateStats();
                 
             } catch (error) {
                 console.error('❌ Error al registrar asistencia:', error);
@@ -636,75 +743,93 @@
             }
         }
 
-        // Función para actualizar estadísticas
-        async function updateStats() {
+        // Función para cargar historial de acreditados
+        async function loadAccreditedHistory() {
             try {
-                console.log('📊 Actualizando estadísticas...');
+                const today = new Date().toISOString().split('T')[0];
                 
-                // Total registrados
-                const { count: totalCount, error: totalError } = await _supabase
+                // Obtener acreditados del día actual
+                const { data: accredited, error } = await _supabase
                     .from('asistencia')
-                    .select('*', { count: 'exact', head: true });
+                    .select('*')
+                    .eq('presente', true)
+                    .gte('fecha_asistencia', today)
+                    .order('fecha_asistencia', { ascending: false });
 
-                if (totalError) throw totalError;
+                if (error) throw error;
 
-                // Presentes
-                const { count: presentCount, error: presentError } = await _supabase
-                    .from('asistencia')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('presente', true);
+                // Actualizar contador
+                document.getElementById('totalAccredited').textContent = accredited?.length || 0;
 
-                if (presentError) throw presentError;
-
-                // Actualizar DOM
-                document.getElementById('totalCount').textContent = totalCount || 0;
-                document.getElementById('presentCount').textContent = presentCount || 0;
-                document.getElementById('absentCount').textContent = (totalCount || 0) - (presentCount || 0);
-
-                console.log('📊 Estadísticas actualizadas:', { totalCount, presentCount });
+                // Mostrar lista
+                displayAccreditedHistory(accredited || []);
 
             } catch (error) {
-                console.error('❌ Error al actualizar estadísticas:', error);
+                console.error('Error al cargar historial:', error);
+                document.getElementById('historyList').innerHTML = `
+                    <div class="no-records">
+                        <div class="no-records-icon">❌</div>
+                        <div class="no-records-text">Error al cargar historial</div>
+                    </div>
+                `;
             }
+        }
+
+        // Función para mostrar historial de acreditados
+        function displayAccreditedHistory(accredited) {
+            const historyList = document.getElementById('historyList');
+            
+            if (!accredited || accredited.length === 0) {
+                historyList.innerHTML = `
+                    <div class="no-records">
+                        <div class="no-records-icon">📋</div>
+                        <div class="no-records-text">No hay acreditaciones registradas hoy</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const historyHTML = accredited.map(person => {
+                const time = new Date(person.fecha_asistencia).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return `
+                    <div class="history-item">
+                        <div class="history-person">
+                            <div class="person-name">${person.aspirante || 'Sin nombre'}</div>
+                            <div class="person-details">
+                                DNI: ${person.dni} • ${person.cargo || 'Sin cargo'} • 
+                                ${person.region || 'Sin región'} • Asiento: ${person.asiento || 'N/A'}
+                            </div>
+                        </div>
+                        <div class="history-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+
+            historyList.innerHTML = historyHTML;
         }
 
         // Funciones de utilidad
         function showError(message) {
-            // Remover mensajes anteriores
-            const existingMessages = document.querySelectorAll('.error-message, .success-message');
-            existingMessages.forEach(msg => msg.remove());
-
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
+            const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
-            
-            document.querySelector('.search-card').appendChild(errorDiv);
-            
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
         }
 
         function showSuccess(message) {
-            // Remover mensajes anteriores
-            const existingMessages = document.querySelectorAll('.error-message, .success-message');
-            existingMessages.forEach(msg => msg.remove());
-
-            const successDiv = document.createElement('div');
-            successDiv.className = 'success-message';
+            const successDiv = document.getElementById('successMessage');
             successDiv.textContent = message;
-            
-            document.querySelector('.search-card').appendChild(successDiv);
-            
-            setTimeout(() => {
-                successDiv.remove();
-            }, 3000);
+            successDiv.classList.add('show');
+            setTimeout(() => successDiv.classList.remove('show'), 3000);
         }
 
-        function logout() {
-            if (confirm('¿Está seguro que desea cerrar sesión?')) {
-                window.location.href = 'login.html';
-            }
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.toggle('show', show);
         }
 
         // Inicialización
@@ -714,7 +839,7 @@
             // Probar conexión y cargar estadísticas
             testSupabaseConnection().then(connected => {
                 if (connected) {
-                    updateStats();
+                    loadAccreditedHistory();
                 }
             });
             
