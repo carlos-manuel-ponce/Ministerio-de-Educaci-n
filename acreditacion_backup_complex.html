@@ -13,7 +13,6 @@
             --error: #dc2626;
             --text: #1f2937;
             --light: #6b7280;
-            --bg-light: #f8fafc;
         }
 
         * { box-sizing: border-box; }
@@ -150,7 +149,7 @@
         }
 
         .user-card {
-            background: var(--bg-light);
+            background: #f8fafc;
             border-radius: 0.75em;
             padding: 1em;
             margin-bottom: 1em;
@@ -300,7 +299,6 @@
     </div>
 
     <script>
-        // 🔗 CONEXIÓN A SUPABASE - TABLA DE FUNCIONARIOS
         const supabase = window.supabase.createClient(
             'https://pjcokjzxzgefpdmbkuop.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqY29ranp4emdlZnBkbWJrdW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwOTU4MDEsImV4cCI6MjA0MzY3MTgwMX0.m6p56KgGnlqSsJJJYCCqPbYMB6x_FjFyO5R5mRANY5c'
@@ -308,7 +306,6 @@
 
         let currentUser = null;
 
-        // Cache de elementos DOM
         const elements = {
             loading: document.getElementById('loading'),
             searchBtn: document.getElementById('searchBtn'),
@@ -358,7 +355,6 @@
             currentUser = user;
         }
 
-        // 🔍 BÚSQUEDA EN TABLA DE FUNCIONARIOS POR DNI
         async function searchUser(event) {
             event.preventDefault();
             
@@ -368,55 +364,31 @@
                 return;
             }
 
-            // Validar que solo contenga números
-            if (!/^\d+$/.test(dni)) {
-                showError('El DNI debe contener solo números');
-                return;
-            }
-
             clearResults();
             showLoading(true);
 
             try {
-                console.log('🔍 Buscando DNI en Supabase:', dni);
-                
-                // BÚSQUEDA EN TABLA 'funcionarios' POR CAMPO 'cedula'
                 const { data: users, error } = await supabase
                     .from('funcionarios')
-                    .select(`
-                        id,
-                        nombre,
-                        cedula,
-                        cargo,
-                        dependencia,
-                        attendance:asistencias(fecha, presente)
-                    `)
+                    .select('*, attendance:asistencias(fecha, presente)')
                     .eq('cedula', dni)
                     .limit(1);
 
-                console.log('📊 Respuesta de Supabase:', { users, error });
-
-                if (error) {
-                    console.error('❌ Error de Supabase:', error);
-                    throw error;
-                }
+                if (error) throw error;
 
                 if (users?.length > 0) {
-                    console.log('✅ Usuario encontrado:', users[0]);
                     showUser(users[0]);
                 } else {
-                    console.log('❌ No se encontró usuario con DNI:', dni);
-                    showError('No se encontró funcionario con ese DNI en la base de datos');
+                    showError('No se encontró funcionario con ese DNI');
                 }
             } catch (error) {
-                console.error('❌ Error en búsqueda:', error);
-                showError('Error al buscar en la base de datos: ' + error.message);
+                console.error('Error:', error);
+                showError('Error al buscar: ' + error.message);
             } finally {
                 showLoading(false);
             }
         }
 
-        // 📝 REGISTRAR ASISTENCIA EN TABLA 'asistencias'
         async function giveAttendance() {
             if (!currentUser) return;
 
@@ -426,9 +398,6 @@
                 const today = new Date().toISOString().split('T')[0];
                 const now = new Date().toISOString();
 
-                console.log('📝 Registrando asistencia para:', currentUser.nombre);
-
-                // Verificar si ya existe asistencia para hoy
                 const { data: existing, error: checkError } = await supabase
                     .from('asistencias')
                     .select('*')
@@ -439,20 +408,12 @@
                 if (checkError && checkError.code !== 'PGRST116') throw checkError;
 
                 if (existing) {
-                    // Actualizar asistencia existente
                     const { error } = await supabase
                         .from('asistencias')
-                        .update({ 
-                            presente: true, 
-                            hora_entrada: now, 
-                            updated_at: now 
-                        })
+                        .update({ presente: true, hora_entrada: now, updated_at: now })
                         .eq('id', existing.id);
-                    
                     if (error) throw error;
-                    console.log('✅ Asistencia actualizada');
                 } else {
-                    // Crear nueva asistencia
                     const { error } = await supabase
                         .from('asistencias')
                         .insert({
@@ -463,9 +424,7 @@
                             created_at: now,
                             updated_at: now
                         });
-                    
                     if (error) throw error;
-                    console.log('✅ Nueva asistencia registrada');
                 }
 
                 elements.success.classList.add('show');
@@ -477,25 +436,15 @@
                 }, 2000);
 
             } catch (error) {
-                console.error('❌ Error al registrar asistencia:', error);
-                showError('Error al registrar asistencia: ' + error.message);
+                console.error('Error:', error);
+                showError('Error al registrar: ' + error.message);
             } finally {
                 showLoading(false);
             }
         }
 
-        // 🚀 INICIALIZACIÓN
-        document.addEventListener('DOMContentLoaded', function() {
-            elements.dni.focus();
-            console.log('✅ Sistema de búsqueda de asistentes iniciado');
-            console.log('📊 Conectado a Supabase - Tabla: funcionarios');
-        });
-
-        // Validación en tiempo real
-        elements.dni.addEventListener('input', function(e) {
-            // Solo permitir números
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
+        // Auto-focus on load
+        elements.dni.focus();
     </script>
 </body>
 </html>
