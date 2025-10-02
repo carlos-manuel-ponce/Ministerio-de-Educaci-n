@@ -7,7 +7,22 @@
   font-weight:700;
   color:var(--brand);
   margin:0;
-  text-align:center;
+  tex.stat-card.present {
+  background: linear-gradient(135deg, var(--celeste) 0%, #4A9DB5 100%);
+  color: white;
+  border-color: var(--celeste);
+}
+
+.stat-card.absent {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  border-color: #dc2626;
+}
+
+.stat-card.percentage {
+  background: linear-gradient(135deg, var(--brand) 0%, #4A7BB3 100%);
+  color: white;
+  border-color: var(--brand);
 }t="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-m.legend {
@@ -30,7 +45,8 @@
   --panel:#f8fafc;
   --txt:#1f2937;
   --ok:#25d366;
-  --brand:#1e3a8a;
+  --brand:#3B65A3;
+  --celeste:#56B4C6;
   --seat:#f1f5f9;
   --seat-border:#cbd5e1;
 }
@@ -175,21 +191,27 @@ main {
 }
 
 .stat-card.present {
-  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  background: linear-gradient(135deg, var(--celeste) 0%, #4A9DB5 100%);
   color: white;
-  border-color: #16a34a;
+  border-color: var(--celeste);
 }
 
 .stat-card.absent {
-  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  background: linear-gradient(135deg, var(--celeste) 0%, #4A9DB5 100%);
   color: white;
-  border-color: #dc2626;
+  border-color: var(--celeste);
 }
 
 .stat-card.percentage {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, var(--celeste) 0%, #4A9DB5 100%);
   color: white;
-  border-color: #1e3a8a;
+  border-color: var(--celeste);
+}
+
+.stat-card:not(.present):not(.absent):not(.percentage) {
+  background: linear-gradient(135deg, var(--celeste) 0%, #4A9DB5 100%);
+  color: white;
+  border-color: var(--celeste);
 }
 
 .stat-number {
@@ -199,7 +221,7 @@ main {
   line-height:1;
 }
 
-.stat-card:not(.present):not(.absent):not(.percentage) .stat-number { color:var(--brand); }
+.stat-card:not(.present):not(.absent):not(.percentage) .stat-number { color: white !important; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
 
 .stat-card.present .stat-number,
 .stat-card.absent .stat-number,
@@ -216,7 +238,9 @@ main {
 }
 
 .stat-card:not(.present):not(.absent):not(.percentage) .stat-label {
-  color:var(--brand);
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+  font-weight: 800 !important;
 }
 
 .stat-card.present .stat-label,
