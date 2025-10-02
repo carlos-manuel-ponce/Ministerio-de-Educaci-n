@@ -402,6 +402,54 @@ main {
   position:relative;
 }
 
+.stage-row .seat.empty-seat {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  color: transparent;
+  cursor: default;
+  opacity: 0.5;
+}
+
+.stage-row .seat.empty-seat:hover {
+  background: #f8f9fa;
+  transform: none;
+  z-index: auto;
+}
+
+/* Colores específicos para las primeras dos filas del Sector 1 */
+.stage-row .seat.color-violeta {
+  background: #8B5CF6 !important;
+  border: 2px solid #7C3AED !important;
+  opacity: 1 !important;
+}
+
+.stage-row .seat.color-azul {
+  background: #3B82F6 !important;
+  border: 2px solid #2563EB !important;
+  opacity: 1 !important;
+}
+
+.stage-row .seat.color-naranja {
+  background: #F97316 !important;
+  border: 2px solid #EA580C !important;
+  opacity: 1 !important;
+}
+
+.stage-row .seat.color-negro {
+  background: #1F2937 !important;
+  border: 2px solid #111827 !important;
+  opacity: 1 !important;
+}
+
+/* Hover para asientos coloreados */
+.stage-row .seat.color-violeta:hover,
+.stage-row .seat.color-azul:hover,
+.stage-row .seat.color-naranja:hover,
+.stage-row .seat.color-negro:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
 /* Modal */
 dialog {
   border:none;
@@ -703,7 +751,7 @@ function logout() {
 function crearSector(inicio, fin) {
   const div = document.createElement('div');
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  let filaIndex = Math.floor((inicio - 1) / 10);
+  let filaIndex = 0;
   
   for (let i = inicio; i <= fin; i += 10) {
     const row = document.createElement('div');
@@ -711,15 +759,89 @@ function crearSector(inicio, fin) {
     
     const letter = document.createElement('div');
     letter.className = 'row-label';
-    letter.textContent = letters[filaIndex] || '';
+    // Las primeras dos filas no tienen letras (filaIndex 0 y 1)
+    if (filaIndex >= 2) {
+      letter.textContent = letters[filaIndex - 2] || '';
+    } else {
+      letter.textContent = '';
+    }
     row.appendChild(letter);
     
     for (let j = i; j < i + 10 && j <= fin; j++) {
       const seat = document.createElement('div');
       seat.className = 'seat';
-      seat.textContent = j;
-      seat.dataset.id = j;
-      seat.addEventListener('click', () => mostrarDetalle(seat));
+      // Las primeras dos filas de cada sector no tienen números
+      if (filaIndex >= 2) {
+        seat.textContent = j;
+        seat.dataset.id = j;
+        
+        // Colores para las filas L y M
+        let hasColor = false;
+        
+        // Fila L corresponde a filaIndex 12 (L es la 12va letra, pero considerando que A empieza en filaIndex 2, L sería filaIndex 13)
+        // Con 130 asientos por sector, tenemos filaIndex de 0 a 12, así que L sería filaIndex 12
+        
+        // Última fila de ambos sectores: Toda AZUL en Sector 1, Toda VIOLETA en Sector 2
+        if (filaIndex === 12 && inicio === 1) {
+          seat.classList.add('color-azul');
+          hasColor = true;
+        }
+        else if (filaIndex === 12 && inicio === 131) {
+          seat.classList.add('color-violeta');
+          hasColor = true;
+        }
+        
+        if (hasColor) {
+          seat.addEventListener('click', () => mostrarDetalle(seat));
+        } else {
+          seat.addEventListener('click', () => mostrarDetalle(seat));
+        }
+      } else {
+        seat.textContent = '';
+        seat.dataset.id = '';
+        
+        // Colores específicos para las primeras dos filas de ambos sectores
+        let hasColor = false;
+        if (inicio === 1 || inicio === 131) { // Ambos sectores
+          const seatPosition = (j - i) + 1; // Posición en la fila (1-10)
+          
+          if (filaIndex === 0) { // Fila 1: VIOLETA-AZUL-AZUL-AZUL-NARANJA-NARANJA-AZUL-AZUL-AZUL-AZUL
+            if (seatPosition === 1) {
+              seat.classList.add('color-violeta');
+              hasColor = true;
+            }
+            else if (seatPosition >= 2 && seatPosition <= 4) {
+              seat.classList.add('color-azul');
+              hasColor = true;
+            }
+            else if (seatPosition === 5 || seatPosition === 6) {
+              seat.classList.add('color-naranja');
+              hasColor = true;
+            }
+            else if (seatPosition >= 7 && seatPosition <= 10) {
+              seat.classList.add('color-azul');
+              hasColor = true;
+            }
+          } else if (filaIndex === 1) { // Fila 2: VIOLETA-VIOLETA-VIOLETA-VIOLETA-NEGRO-VIOLETA-VIOLETA-VIOLETA-VIOLETA-VIOLETA
+            if (seatPosition === 5) {
+              seat.classList.add('color-negro');
+              hasColor = true;
+            }
+            else {
+              seat.classList.add('color-violeta');
+              hasColor = true;
+            }
+          }
+        }
+        
+        // Solo agregar empty-seat si no tiene color específico
+        if (!hasColor) {
+          seat.classList.add('empty-seat');
+        } else {
+          // Los asientos con color también pueden hacer clic para mostrar detalle
+          seat.addEventListener('click', () => mostrarDetalle(seat));
+        }
+      }
       row.appendChild(seat);
     }
     
@@ -789,11 +911,37 @@ function mostrarDetalle(seat) {
   const id = seat.dataset.id;
   const registro = Object.entries(dataAsistencia).find(([dni, info]) => info.asiento == id);
   
+  // Determinar el tipo de asiento según su color
+  let tipoAsiento = '';
+  if (seat.classList.contains('color-violeta')) {
+    tipoAsiento = 'JURADOS DE OPOSICION Y APELACION';
+  } else if (seat.classList.contains('color-azul')) {
+    tipoAsiento = 'FUNCIONARIOS';
+  } else if (seat.classList.contains('color-naranja')) {
+    // Para asientos naranjas, verificar la posición para determinar el tipo específico
+    const seatNumber = parseInt(id);
+    if ((seatNumber >= 1 && seatNumber <= 10) || (seatNumber >= 131 && seatNumber <= 140)) {
+      // Primera fila de cada sector - posiciones 5 y 6 son Gobernador
+      if (seatNumber === 5 || seatNumber === 6 || seatNumber === 135 || seatNumber === 136) {
+        tipoAsiento = 'GOBERNADOR DE LA PROVINCIA';
+      } else {
+        tipoAsiento = 'MINISTRO DE EDUCACIÓN';
+      }
+    } else {
+      tipoAsiento = 'MINISTRO DE EDUCACIÓN';
+    }
+  } else if (seat.classList.contains('color-negro')) {
+    tipoAsiento = 'CUSTODIA DEL GOBERNADOR';
+  }
+  
   if (registro) {
     const [dni, info] = registro;
     const fechaAsistencia = info.fecha_asistencia 
       ? new Date(info.fecha_asistencia).toLocaleString('es-ES')
       : 'No registrada';
+    
+    // Si es un asiento con color especial, mostrar solo el tipo sin número de asiento
+    const asientoInfo = tipoAsiento ? tipoAsiento : `Asiento ${info.asiento}`;
     
     detalleInfo.innerHTML = `
       <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;line-height:1.8">
@@ -802,7 +950,7 @@ function mostrarDetalle(seat) {
         <b>Cargo:</b> <span>${info.cargo}</span>
         <b>Aspirante:</b> <span>${info.aspirante}</span>
         <b>DNI:</b> <span>${info.dni}</span>
-        <b>Asiento:</b> <span>${info.asiento}</span>
+        <b>Ubicación:</b> <span>${asientoInfo}</span>
         <b>Estado:</b> <span style="color:${info.presente ? 'var(--ok)' : '#888'}">${info.presente ? 'Presente' : 'Ausente'}</span>
         <b>Fecha Asistencia:</b> <span>${fechaAsistencia}</span>
       </div>
@@ -810,7 +958,17 @@ function mostrarDetalle(seat) {
     
     abrirModal();
   } else {
-    detalleInfo.innerHTML = '<p style="text-align:center;color:#aaa">Asiento sin asignar</p>';
+    // Para asientos vacíos con colores especiales, mostrar solo el tipo
+    if (tipoAsiento) {
+      detalleInfo.innerHTML = `
+        <div style="text-align:center;padding:20px">
+          <h4 style="color:#1e3a8a;margin-bottom:10px">${tipoAsiento}</h4>
+          <p style="color:#888">RESERVADO</p>
+        </div>
+      `;
+    } else {
+      detalleInfo.innerHTML = '<p style="text-align:center;color:#aaa">Asiento sin asignar</p>';
+    }
     abrirModal();
   }
 }
@@ -846,8 +1004,8 @@ cerrarModal.addEventListener('click', cerrar);
 overlay.addEventListener('click', cerrar);
 
 // Inicialización
-wrap.appendChild(crearSector(1, 100));
-wrap.appendChild(crearSector(101, 209));
+wrap.appendChild(crearSector(1, 130));
+wrap.appendChild(crearSector(131, 260));
 
 cargarDatos().then(() => {
   suscribirCambios();
