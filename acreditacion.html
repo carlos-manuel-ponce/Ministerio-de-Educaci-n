@@ -14,7 +14,6 @@
             --ok: #25d366;
             --brand: #1e3a8a;
             --error: #dc2626;
-            --light: #6b7280;
         }
 
         * {
@@ -25,16 +24,16 @@
             margin: 0;
             padding: 0;
             font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
             color: var(--txt);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5%;
             overflow-x: hidden;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
+            font-size: 16px;
         }
 
         .search-container {
@@ -43,17 +42,13 @@
             border-radius: 1.25em;
             box-shadow: 0 0.75em 2.5em rgba(30, 58, 138, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2rem;
-            max-width: 500px;
+            padding: 5%;
+            max-width: 100%;
+            width: 390px;
             text-align: center;
-            margin: 0 auto 2rem auto;
+            margin: 0 auto;
             transition: all 0.3s ease;
             position: relative;
-        }
-
-        .search-container:hover {
-            box-shadow: 0 16px 50px rgba(30, 58, 138, 0.20);
-            transform: translateY(-2px);
         }
 
         .header {
@@ -64,8 +59,10 @@
         }
 
         .header-logo {
-            width: 80px;
-            height: 80px;
+            width: 50%;
+            max-width: 8em;
+            height: auto;
+            aspect-ratio: 1;
             object-fit: contain;
             filter: drop-shadow(0 0.25em 0.5em rgba(30, 58, 138, 0.15));
         }
@@ -77,129 +74,104 @@
             margin-bottom: 0.75em;
         }
 
-        .intro-text {
-            font-size: 0.875em;
-            color: var(--light);
-            line-height: 1.4;
-            margin-bottom: 1.25em;
-            text-align: center;
-        }
-
         .search-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
             margin-bottom: 1em;
         }
 
         .search-input {
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            text-align: center;
+            width: 100%;
+            padding: 0.75em;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5em;
+            font-size: 0.875em;
+            background: #f3f4f6;
             transition: all 0.3s ease;
-            background: #f9fafb;
+            margin-bottom: 0.75em;
+            text-align: center;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--brand);
+            box-shadow: 0 0 0 0.1875em rgba(30, 58, 138, 0.2);
             background: white;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            transform: scale(1.02);
         }
 
-        .button-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 0.75rem 1rem;
+        .search-btn {
+            width: 100%;
+            padding: 0.75em;
+            background: var(--brand);
+            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 0.5em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 14px;
+            font-size: 0.875em;
         }
 
-        .btn-primary {
-            background: var(--brand);
-            color: white;
-        }
-
-        .btn-primary:hover {
+        .search-btn:hover {
             background: #1e40af;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: var(--txt);
-            border: 1px solid #d1d5db;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+            transform: translateY(-0.125em);
+            box-shadow: 0 0.25em 0.75em rgba(30, 58, 138, 0.3);
         }
 
         .results-section {
-            display: none;
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 1em;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 0;
         }
 
         .results-section.show {
-            display: block;
-            animation: slideDown 0.3s ease;
+            opacity: 1;
+            max-height: 500px;
+            padding-top: 1em;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .user-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-item {
-            padding: 0.75rem;
+        .user-card {
             background: #f8fafc;
-            border-radius: 8px;
-            border-left: 3px solid var(--brand);
+            border-radius: 0.75em;
+            padding: 1em;
+            margin-bottom: 1em;
+            text-align: left;
+            border: 1px solid #e5e7eb;
         }
 
-        .info-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--light);
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
+        .user-name {
+            font-size: 1.125em;
+            font-weight: 700;
+            color: var(--brand);
+            margin-bottom: 0.5em;
         }
 
-        .info-value {
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5em 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-row:last-of-type {
+            border-bottom: none;
+            margin-bottom: 1em;
+        }
+
+        .detail-label {
             font-weight: 600;
+            color: #4b5563;
+            font-size: 0.875em;
+        }
+
+        .detail-value {
             color: var(--txt);
+            font-size: 0.875em;
+            text-align: right;
         }
 
         .confirm-btn {
@@ -207,47 +179,36 @@
             background: var(--ok);
             color: white;
             border: none;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 0.875em;
+            border-radius: 0.5em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
+            font-size: 0.875em;
         }
 
         .confirm-btn:hover {
-            background: #15803d;
-            transform: translateY(-1px);
-        }
-
-        .error-message {
-            background: #fef2f2;
-            color: var(--error);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            text-align: center;
-            border-left: 4px solid var(--error);
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
+            background: #22c55e;
+            transform: translateY(-0.125em);
+            box-shadow: 0 0.25em 0.75em rgba(34, 197, 94, 0.3);
         }
 
         .success-message {
-            background: #f0fdf4;
-            color: var(--ok);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
+            background: #dcfce7;
+            color: #166534;
+            padding: 1em;
+            border-radius: 0.5em;
+            font-weight: 600;
             text-align: center;
-            border-left: 4px solid var(--ok);
-            display: none;
+            margin-top: 1em;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
         }
 
         .success-message.show {
-            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .loading-overlay {
@@ -261,10 +222,6 @@
             align-items: center;
             justify-content: center;
             border-radius: 1.25em;
-        }
-
-        .loading-overlay.show {
-            display: flex;
         }
 
         .spinner {
@@ -281,295 +238,100 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 400px;
-            width: 90%;
+        .error-message {
+            color: var(--error);
+            font-size: 0.75em;
+            margin-top: 0.5em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
             text-align: center;
         }
 
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--brand);
-            margin-bottom: 1rem;
+        .error-message.show {
+            opacity: 1;
         }
 
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        /* Historial de Acreditados */
-        .history-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .history-title {
-            color: var(--brand);
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .history-summary {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .summary-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .summary-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--ok);
-            line-height: 1;
-        }
-
-        .summary-label {
-            font-size: 0.75rem;
-            color: var(--light);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .refresh-btn {
-            background: var(--brand);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .refresh-btn:hover {
-            background: #1e40af;
-            transform: translateY(-1px);
-        }
-
-        .history-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
-            transition: background 0.2s ease;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-item:hover {
-            background: #f8fafc;
-        }
-
-        .history-person {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .person-name {
-            font-weight: 600;
-            color: var(--txt);
-            font-size: 0.9rem;
-        }
-
-        .person-details {
-            font-size: 0.75rem;
-            color: var(--light);
-            margin-top: 0.2rem;
-        }
-
-        .history-time {
-            font-size: 0.75rem;
-            color: var(--light);
-            text-align: right;
-            white-space: nowrap;
-            margin-left: 1rem;
-        }
-
-        .no-records {
-            text-align: center;
-            padding: 2rem;
-            color: var(--light);
-        }
-
-        .no-records-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .no-records-text {
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 1rem;
+        @media screen and (max-width: 450px) {
+            body {
+                padding: 3%;
             }
-
+            
             .search-container {
-                padding: 1.5rem;
+                width: min(390px, 95vw);
+                padding: 6%;
             }
+        }
 
-            .button-group {
-                flex-direction: column;
+        @media screen and (max-width: 350px) {
+            body {
+                font-size: 14px;
             }
-
-            .history-header {
+            
+            .header {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 0.5em;
                 text-align: center;
-            }
-
-            .history-summary {
-                justify-content: center;
-            }
-
-            .history-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-
-            .history-time {
-                margin-left: 0;
-                align-self: flex-end;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Search Card -->
-        <div class="search-container">
-            <div class="loading-overlay" id="loadingOverlay">
-                <div class="spinner"></div>
-            </div>
-            
-            <!-- Solo Logo Centrado -->
-            <div class="header">
-                <img src="LOGO NUEVO COLOR_122003.png" alt="Logo Ministerio de Educación" class="header-logo">
-            </div>
-            
-            <h2 class="search-title">Búsqueda de Asistente</h2>
-            <p class="intro-text">Ingrese el DNI para verificar identidad y dar asistencia.</p>
-            
-            <form class="search-form" onsubmit="searchUser(event)">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    id="searchInput" 
-                    placeholder="Ingrese DNI"
-                    required
-                >
-                <div class="button-group">
-                    <button type="submit" class="btn btn-primary" id="searchBtn">
-                        Buscar y Acreditar
-                    </button>
-                    <button type="button" class="btn btn-secondary" onclick="loadAccreditedHistory()">
-                        Actualizar
-                    </button>
+    <div class="search-container">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+        </div>
+        
+        <div class="header">
+            <img src="LOGO NUEVO COLOR_122003.png" alt="Logo" class="header-logo">
+        </div>
+
+        <div class="search-title">Buscar Aspirante por DNI</div>
+        
+        <form class="search-form" onsubmit="searchUser(event)">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="Ingrese DNI..."
+                required
+            >
+            <button type="submit" class="search-btn" id="searchBtn">Buscar</button>
+        </form>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="user-card" id="userCard">
+                <div class="user-name" id="userName"></div>
+                <div class="user-info">
+                    <div class="detail-row">
+                        <span class="detail-label">Región:</span>
+                        <span class="detail-value" id="userRegion"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Establecimiento:</span>
+                        <span class="detail-value" id="userEstablecimiento"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Cargo:</span>
+                        <span class="detail-value" id="userCargo"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">DNI:</span>
+                        <span class="detail-value" id="userDni"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Asiento:</span>
+                        <span class="detail-value" id="userAsiento"></span>
+                    </div>
                 </div>
-            </form>
-
-            <div class="error-message" id="errorMessage"></div>
-
-            <!-- Results Section -->
-            <div class="results-section" id="resultsSection">
-                <div class="user-info" id="userInfo">
-                    <!-- User info will be populated here -->
-                </div>
-                <button class="confirm-btn" onclick="showConfirmModal()">
-                    Dar Asistencia
-                </button>
-            </div>
-
-            <div class="success-message" id="successMessage">
-                ¡Asistencia registrada exitosamente!
+                
+                <button class="confirm-btn" onclick="confirmAttendance()">Dar Asistencia</button>
             </div>
         </div>
 
-        <!-- Historial de Acreditados -->
-        <div class="history-container">
-            <div class="history-header">
-                <h3 class="history-title">📋 Historial de Acreditados - Hoy</h3>
-                <div class="history-summary">
-                    <span class="summary-item">
-                        <span class="summary-number" id="totalAccredited">0</span>
-                        <span class="summary-label">Acreditados</span>
-                    </span>
-                    <button class="refresh-btn" onclick="loadAccreditedHistory()">
-                        🔄 Actualizar
-                    </button>
-                </div>
-            </div>
-            <div class="history-list" id="historyList">
-                <div class="no-records">
-                    <div class="no-records-icon">📋</div>
-                    <div class="no-records-text">Cargando historial...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Confirmar Asistencia</h3>
-            <p id="confirmText">¿Confirma que desea registrar la asistencia de este participante?</p>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="confirmAttendance()">Confirmar</button>
-            </div>
+        <div class="success-message" id="successMessage">
+            ¡Asistencia registrada exitosamente!
         </div>
     </div>
 
@@ -577,242 +339,11 @@
         // Configuración de Supabase
         const SUPABASE_URL = 'https://pjcokjzxzgefpdmbkuop.supabase.co'
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqY29ranp4emdlZnBkbWJrdW9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgwOTU4MDEsImV4cCI6MjA0MzY3MTgwMX0.m6p56KgGnlqSsJJJYCCqPbYMB6x_FjFyO5R5mRANY5c'
-        
+
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         let currentUser = null;
 
-        // Función para probar conectividad con Supabase
-        async function testSupabaseConnection() {
-            try {
-                console.log('🔄 Probando conexión con Supabase...');
-                
-                const { data, error } = await _supabase
-                    .from('asistencia')
-                    .select('count', { count: 'exact' })
-                    .limit(1);
-                
-                if (error) {
-                    console.error('❌ Error de conexión:', error);
-                    showError('Error de conexión: ' + error.message);
-                    return false;
-                }
-                
-                console.log('✅ Conexión exitosa con Supabase');
-                return true;
-            } catch (error) {
-                console.error('❌ Error crítico:', error);
-                showError('Error crítico de conexión');
-                return false;
-            }
-        }
-
-        // Función para buscar usuario
-        async function searchUser(event) {
-            event.preventDefault();
-            
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            const resultsSection = document.getElementById('resultsSection');
-            
-            const dni = searchInput.value.trim();
-            
-            if (!dni) {
-                showError('Por favor ingrese un DNI');
-                return;
-            }
-
-            // Mostrar loading
-            showLoading(true);
-
-            try {
-                console.log('🔍 Buscando DNI:', dni);
-                
-                const { data: users, error } = await _supabase
-                    .from('asistencia')
-                    .select('*')
-                    .eq('dni', dni)
-                    .limit(1);
-
-                if (error) {
-                    throw error;
-                }
-
-                if (users && users.length > 0) {
-                    currentUser = users[0];
-                    showUserResults(currentUser);
-                    resultsSection.classList.add('show');
-                } else {
-                    showError('No se encontró ningún registro con el DNI: ' + dni);
-                    resultsSection.classList.remove('show');
-                }
-
-            } catch (error) {
-                console.error('❌ Error en búsqueda:', error);
-                showError('Error al buscar: ' + error.message);
-                resultsSection.classList.remove('show');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Función para mostrar resultados del usuario
-        function showUserResults(user) {
-            const userInfo = document.getElementById('userInfo');
-            
-            userInfo.innerHTML = `
-                <div class="info-item">
-                    <div class="info-label">Región</div>
-                    <div class="info-value">${user.region || 'No especificada'}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Establecimiento</div>
-                    <div class="info-value">${user.establecimiento || 'No especificado'}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Cargo</div>
-                    <div class="info-value">${user.cargo || 'No especificado'}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Aspirante</div>
-                    <div class="info-value">${user.aspirante || 'No especificado'}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">DNI</div>
-                    <div class="info-value">${user.dni}</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Asiento</div>
-                    <div class="info-value">${user.asiento || 'No asignado'}</div>
-                </div>
-            `;
-        }
-
-        // Función para mostrar modal de confirmación
-        function showConfirmModal() {
-            if (!currentUser) return;
-            
-            const modal = document.getElementById('confirmModal');
-            const confirmText = document.getElementById('confirmText');
-            
-            confirmText.textContent = `¿Confirma que desea registrar la asistencia de ${currentUser.aspirante}?`;
-            modal.classList.add('show');
-        }
-
-        // Función para cerrar modal
-        function closeModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.remove('show');
-        }
-
-        // Función para confirmar asistencia
-        async function confirmAttendance() {
-            if (!currentUser) return;
-
-            const modal = document.getElementById('confirmModal');
-            
-            try {
-                console.log('✅ Registrando asistencia para:', currentUser.dni);
-                
-                const now = new Date().toISOString();
-                
-                const { error } = await _supabase
-                    .from('asistencia')
-                    .update({ 
-                        presente: true, 
-                        fecha_asistencia: now 
-                    })
-                    .eq('dni', currentUser.dni);
-
-                if (error) {
-                    throw error;
-                }
-
-                showSuccess('¡Asistencia registrada exitosamente!');
-                modal.classList.remove('show');
-                
-                // Actualizar historial inmediatamente
-                loadAccreditedHistory();
-                
-                // Limpiar formulario
-                document.getElementById('searchInput').value = '';
-                document.getElementById('resultsSection').classList.remove('show');
-                
-            } catch (error) {
-                console.error('❌ Error al registrar asistencia:', error);
-                showError('Error al registrar asistencia: ' + error.message);
-            }
-        }
-
-        // Función para cargar historial de acreditados
-        async function loadAccreditedHistory() {
-            try {
-                const today = new Date().toISOString().split('T')[0];
-                
-                // Obtener acreditados del día actual
-                const { data: accredited, error } = await _supabase
-                    .from('asistencia')
-                    .select('*')
-                    .eq('presente', true)
-                    .gte('fecha_asistencia', today)
-                    .order('fecha_asistencia', { ascending: false });
-
-                if (error) throw error;
-
-                // Actualizar contador
-                document.getElementById('totalAccredited').textContent = accredited?.length || 0;
-
-                // Mostrar lista
-                displayAccreditedHistory(accredited || []);
-
-            } catch (error) {
-                console.error('Error al cargar historial:', error);
-                document.getElementById('historyList').innerHTML = `
-                    <div class="no-records">
-                        <div class="no-records-icon">❌</div>
-                        <div class="no-records-text">Error al cargar historial</div>
-                    </div>
-                `;
-            }
-        }
-
-        // Función para mostrar historial de acreditados
-        function displayAccreditedHistory(accredited) {
-            const historyList = document.getElementById('historyList');
-            
-            if (!accredited || accredited.length === 0) {
-                historyList.innerHTML = `
-                    <div class="no-records">
-                        <div class="no-records-icon">📋</div>
-                        <div class="no-records-text">No hay acreditaciones registradas hoy</div>
-                    </div>
-                `;
-                return;
-            }
-
-            const historyHTML = accredited.map(person => {
-                const time = new Date(person.fecha_asistencia).toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                return `
-                    <div class="history-item">
-                        <div class="history-person">
-                            <div class="person-name">${person.aspirante || 'Sin nombre'}</div>
-                            <div class="person-details">
-                                DNI: ${person.dni} • ${person.cargo || 'Sin cargo'} • 
-                                ${person.region || 'Sin región'} • Asiento: ${person.asiento || 'N/A'}
-                            </div>
-                        </div>
-                        <div class="history-time">${time}</div>
-                    </div>
-                `;
-            }).join('');
-
-            historyList.innerHTML = historyHTML;
-        }
-
-        // Funciones de utilidad
+        // Función para mostrar mensajes de error
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             errorDiv.textContent = message;
@@ -820,37 +351,123 @@
             setTimeout(() => errorDiv.classList.remove('show'), 5000);
         }
 
-        function showSuccess(message) {
-            const successDiv = document.getElementById('successMessage');
-            successDiv.textContent = message;
-            successDiv.classList.add('show');
-            setTimeout(() => successDiv.classList.remove('show'), 3000);
-        }
-
+        // Función para mostrar/ocultar spinner de carga
         function showLoading(show) {
             const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.toggle('show', show);
+            const searchBtn = document.getElementById('searchBtn');
+            
+            overlay.style.display = show ? 'flex' : 'none';
+            searchBtn.disabled = show;
         }
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Iniciando aplicación...');
+        // Función para limpiar resultados anteriores
+        function clearResults() {
+            const resultsSection = document.getElementById('resultsSection');
+            const successMessage = document.getElementById('successMessage');
             
-            // Probar conexión y cargar estadísticas
-            testSupabaseConnection().then(connected => {
-                if (connected) {
-                    loadAccreditedHistory();
+            resultsSection.classList.remove('show');
+            successMessage.classList.remove('show');
+            currentUser = null;
+        }
+
+        // Función para mostrar datos del usuario
+        function showUserResults(user) {
+            document.getElementById('userName').textContent = user.aspirante;
+            document.getElementById('userRegion').textContent = user.region || 'No especificada';
+            document.getElementById('userEstablecimiento').textContent = user.establecimiento || 'No especificado';
+            document.getElementById('userCargo').textContent = user.cargo || 'No especificado';
+            document.getElementById('userDni').textContent = user.dni;
+            document.getElementById('userAsiento').textContent = user.asiento || 'No asignado';
+            
+            document.getElementById('resultsSection').classList.add('show');
+            currentUser = user;
+        }
+
+        // Función para buscar usuario
+        async function searchUser(event) {
+            if (event) event.preventDefault();
+            
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
+            
+            if (!query) {
+                showError('Por favor ingrese un DNI');
+                return;
+            }
+
+            clearResults();
+            showLoading(true);
+
+            try {
+                // Buscar por DNI en la tabla asistencia
+                const { data: users, error } = await _supabase
+                    .from('asistencia')
+                    .select('*')
+                    .eq('dni', query)
+                    .limit(1);
+
+                if (error) throw error;
+
+                if (users && users.length > 0) {
+                    showUserResults(users[0]);
+                } else {
+                    showError('No se encontró ningún registro con ese DNI');
                 }
-            });
-            
-            // Focus en el input
+
+            } catch (error) {
+                console.error('Error al buscar:', error);
+                showError('Error al buscar: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Función para confirmar asistencia
+        async function confirmAttendance() {
+            if (!currentUser) return;
+
+            showLoading(true);
+
+            try {
+                const now = new Date().toISOString();
+                
+                // Actualizar el registro como presente
+                const { error } = await _supabase
+                    .from('asistencia')
+                    .update({
+                        presente: true,
+                        fecha_asistencia: now
+                    })
+                    .eq('dni', currentUser.dni);
+
+                if (error) throw error;
+                
+                document.getElementById('successMessage').classList.add('show');
+                
+                // Reiniciar después de 2 segundos
+                setTimeout(() => {
+                    clearResults();
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('searchInput').focus();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error al registrar asistencia:', error);
+                showError('Error al registrar asistencia: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('searchInput').focus();
         });
 
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('confirmModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+        // Permitir búsqueda con Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchUser(e);
             }
         });
     </script>
