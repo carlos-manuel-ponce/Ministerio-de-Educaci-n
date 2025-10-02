@@ -597,22 +597,18 @@ dialog h3 {
     <div class="stat-card">
       <div class="stat-number total" id="totalCount">0</div>
       <div class="stat-label">Total Registrados</div>
-      <div class="stat-sublabel">209 Asientos Disponibles</div>
     </div>
     <div class="stat-card present">
       <div class="stat-number present" id="presentCount">0</div>
       <div class="stat-label">Presentes</div>
-      <div class="stat-sublabel" id="presentSublabel">Asistentes Confirmados</div>
     </div>
     <div class="stat-card absent">
       <div class="stat-number absent" id="absentCount">0</div>
       <div class="stat-label">Ausentes</div>
-      <div class="stat-sublabel" id="absentSublabel">Sin Confirmar Asistencia</div>
     </div>
     <div class="stat-card percentage">
       <div class="stat-number percentage" id="occupancyRate">0%</div>
       <div class="stat-label">Ocupación</div>
-      <div class="stat-sublabel">Asientos Ocupados</div>
     </div>
   </div>
 
@@ -745,9 +741,6 @@ function actualizarEstadisticas() {
   document.getElementById('presentCount').textContent = presentes;
   document.getElementById('absentCount').textContent = ausentes;
   document.getElementById('occupancyRate').textContent = `${ocupacion}%`;
-  
-  document.getElementById('presentSublabel').textContent = `${porcentajePresentes}% del total`;
-  document.getElementById('absentSublabel').textContent = `${porcentajeAusentes}% del total`;
 }
 
 // Actualizar asientos presentes
