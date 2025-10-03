@@ -1,65 +1,446 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Designación de Cargos Jerárquicos > Salón Islas Malvinas</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Sistema - Ministerio de Educación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root{
-            /* Colores base */
-            --bg:#ffffff;                    /* Fondo principal blanco limpio */
-            --panel:#f8fafc;                 /* Paneles y tarjetas gris muy claro */
-            --card:#ffffff;                  /* Tarjetas blancas */
-      
-            /* Colores institucionales */
-            --brand-primary:#3B65A3;         /* Azul institucional principal */
-            --brand-secondary:#56B4C6;       /* Celeste institucional */
-            --brand-light:#E8F1F8;          /* Azul muy claro para fondos */
-            --celeste-light:#E8F6F8;        /* Celeste muy claro para acentos */
-      
-            /* Textos */
-            --text-primary:#1e293b;          /* Texto principal oscuro */
-            --text-secondary:#64748b;        /* Texto secundario */
-            --text-muted:#94a3b8;           /* Texto desactivado */
-      
-            /* Estados de asientos */
-            --seat:#f1f5f9;                 /* Asiento vacío */
-            --seat-border:#e2e8f0;          /* Borde asiento */
-            --present:#22c55e;              /* Verde presente */
-            --absent:#ef4444;               /* Rojo ausente */
-      
-            /* Roles especiales */
-            --role-jurado:#8B5CF6;          /* Violeta para jurados */
-            --role-funcionario:#3B65A3;     /* Azul institucional */
-            --role-ministro:#F97316;        /* Naranja para ministro */
-            --role-custodia:#1F2937;        /* Gris oscuro custodia */
-      
-            /* Efectos y sombras */
-            --shadow-sm:0 1px 2px rgba(59, 101, 163, 0.05);
-            --shadow:0 4px 12px rgba(59, 101, 163, 0.1);
-            --shadow-lg:0 8px 25px rgba(59, 101, 163, 0.15);
-      
-            /* Compatibilidad */
-            --accent:#56B4C6;               /* Celeste para acentos */
-            --brand:#3B65A3;                /* Azul institucional principal */
+        :root {
+            --primary: #004AAD;
+            --secondary: #002E6E;
+            --neutral: #F4F6FA;
+            --accent: #E0E6F0;
+            --alert: #C0392B;
+            --white: #FFFFFF;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
         }
-        *{box-sizing:border-box}
-        body{
-            margin:0;
-            background:linear-gradient(135deg, #f8fafc 0%, #e8f1f8 30%, #ffffff 70%, #f1f8ff 100%);
-            background-attachment:fixed;
-            font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-            color:var(--text-primary);
-            position:relative;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body::before{
-            content:'';
-            position:fixed;
-            top:0;left:0;right:0;bottom:0;
-            background-image:radial-gradient(circle at 25% 25%, rgba(59, 101, 163, 0.03) 0%, transparent 50%),
-                                             radial-gradient(circle at 75% 75%, rgba(86, 180, 198, 0.03) 0%, transparent 50%);
-            pointer-events:none;
-            z-index:1;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.4em;
         }
-        ...existing code from panel_moderno.html...
+
+        .header-institutional {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--secondary);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-institutional {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .header-title {
+            color: var(--white);
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .login-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .login-container:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .login-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+
+        .pin-input-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .pin-input {
+            width: 100%;
+            padding: 20px 16px;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 6px;
+            color: var(--text-dark);
+            background: var(--neutral);
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: 'Inter', monospace;
+        }
+
+        .pin-input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1);
+            transform: scale(1.02);
+        }
+
+        .pin-input::placeholder {
+            color: var(--text-light);
+            opacity: 0.6;
+            letter-spacing: 4px;
+        }
+
+        .access-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 74, 173, 0.3);
+        }
+
+        .access-button:active {
+            transform: translateY(0);
+        }
+
+        .access-button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(192, 57, 43, 0.1);
+            color: var(--alert);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-top: 16px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--alert);
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .footer-info {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 24px 16px;
+                margin: 0 16px;
+            }
+
+            .header-institutional {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .logo-institutional {
+                width: 40px;
+                height: 40px;
+            }
+
+            .pin-input {
+                font-size: 1.5rem;
+                padding: 16px 12px;
+                letter-spacing: 4px;
+            }
+
+            .login-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Animación de entrada */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-institutional">
+        <div class="logo-container">
+            <img src="LOGO NUEVO COLOR_122003.png" alt="Logo Ministerio" class="logo-institutional">
+            <h1 class="header-title">Sistema de Registro de Asistencias</h1>
+        </div>
+    </div>
+
+    <div class="login-container fade-in" id="loginContainer">
+        <h2 class="login-title">Acceso al Sistema</h2>
+        <p class="login-subtitle">Ingrese su PIN de acceso para continuar</p>
+        
+        <form id="loginForm" onsubmit="return false;">
+            <div class="pin-input-container">
+                <input 
+                    type="number" 
+                    id="pinInput" 
+                    class="pin-input" 
+                    placeholder="••••"
+                    inputmode="numeric" 
+                    maxlength="4"
+                    autocomplete="off"
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="access-button" id="accessButton">
+                <span class="spinner" id="spinner"></span>
+                <span id="buttonText">Ingresar al Sistema</span>
+            </button>
+        </form>
+
+        <div class="error-message" id="errorMessage">
+            PIN incorrecto. Por favor, verifique e intente nuevamente.
+        </div>
+    </div>
+
+    <div class="footer-info">
+        Ministerio de Educación - Sistema Oficial de Registro
+    </div>
+
+    <script>
+        // Variables globales
+        const pinInput = document.getElementById('pinInput');
+        const accessButton = document.getElementById('accessButton');
+        const buttonText = document.getElementById('buttonText');
+        const spinner = document.getElementById('spinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginContainer = document.getElementById('loginContainer');
+        const loginForm = document.getElementById('loginForm');
+
+        // Enfocar automáticamente el campo PIN al cargar
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                pinInput.focus();
+            }, 100);
+        });
+
+        // Limitar entrada a 4 dígitos
+        pinInput.addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 4) {
+                value = value.slice(0, 4);
+            }
+            this.value = value;
+            
+            // Ocultar mensaje de error si existe
+            hideError();
+        });
+
+        // Permitir envío con Enter
+        pinInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.length === 4) {
+                validateAccess();
+            }
+        });
+
+        // Manejar envío del formulario
+        loginForm.addEventListener('submit', validateAccess);
+        accessButton.addEventListener('click', validateAccess);
+
+        function validateAccess() {
+            const pin = pinInput.value.trim();
+            
+            // Validar longitud
+            if (pin.length !== 4) {
+                showError('El PIN debe tener exactamente 4 dígitos');
+                return false;
+            }
+
+            // Mostrar estado de carga
+            showLoading();
+
+            // Simular verificación (en producción sería una llamada al servidor)
+            setTimeout(() => {
+                if (pin === '1111') {
+                    // Acceso a módulo de acreditación
+                    redirectTo('acreditacion.html', 'Accediendo al Módulo de Acreditación...');
+                } else if (pin === '2222') {
+                    // Acceso a plano interactivo
+                    redirectTo('panel_moderno.html', 'Accediendo al Plano Interactivo...');
+                } else {
+                    // PIN incorrecto
+                    hideLoading();
+                    showError('PIN incorrecto. Por favor, verifique e intente nuevamente.');
+                    pinInput.select();
+                }
+            }, 1200); // Tiempo de verificación simulado
+
+            return false;
+        }
+
+        function showLoading() {
+            accessButton.disabled = true;
+            spinner.style.display = 'inline-block';
+            buttonText.textContent = 'Verificando acceso...';
+            hideError();
+        }
+
+        function hideLoading() {
+            accessButton.disabled = false;
+            spinner.style.display = 'none';
+            buttonText.textContent = 'Ingresar al Sistema';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        function redirectTo(url, message) {
+            buttonText.textContent = message;
+            
+            // Animación de salida
+            setTimeout(() => {
+                loginContainer.classList.add('fade-out');
+            }, 500);
+
+            // Redirección
+            setTimeout(() => {
+                window.location.href = url;
+            }, 1100);
+        }
+
+        // Prevenir envío accidental del formulario
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement === pinInput) {
+                e.preventDefault();
+                if (pinInput.value.length === 4) {
+                    validateAccess();
+                }
+            }
+        });
+
+        // Limpiar campo al hacer clic fuera y volver a enfocar
+        pinInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (document.activeElement !== pinInput && pinInput.value === '') {
+                    pinInput.focus();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
